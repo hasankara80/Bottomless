@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -5,12 +6,19 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private bool _isStartMovementCompleted;
-    private int _arrowCount;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI starText;
     private int _healthValue;
     private int _starValue;
+    private int _arrowCount;
     private HealthBarManager _healthBarManager;
+    private GameStartManager _gameStartManager;
+    private TutorialManager _tutorialManager;
+
+    private void Awake()
+    {
+        _gameStartManager = GameStartManager.Instance;
+    }
 
     private void Start()
     {
@@ -19,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
         _isStartMovementCompleted = false;
         _arrowCount = 0;
         _healthBarManager = HealthBarManager.Instance;
+        _tutorialManager = TutorialManager.Instance;
         transform.DOMoveX(3.5f, 1).SetEase(Ease.InCubic).OnComplete(() =>
         {
             transform.DOMove(new Vector3(0, 0, -2), 1).OnComplete(() =>
@@ -30,7 +39,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!_isStartMovementCompleted) return;
+        if(!_isStartMovementCompleted) return;
+        if(!_gameStartManager.isCanStartGame) return;
         transform.Translate(Vector3.up * 10 * Time.deltaTime);
 
         if (_arrowCount == 0)
@@ -88,6 +98,12 @@ public class PlayerMovement : MonoBehaviour
             _starValue++;
             starText.text = _starValue.ToString();
             ScaleStar();
+        }
+
+        if (collision.collider.CompareTag("Tutorial"))
+        {
+            _gameStartManager.isCanStartGame = false;
+            _tutorialManager.tutorialText.DOScale(1, 0.25f);
         }
     }
 

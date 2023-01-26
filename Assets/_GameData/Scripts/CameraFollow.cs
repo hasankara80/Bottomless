@@ -4,6 +4,13 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     private bool _isStartMovementCompleted;
+    private GameStartManager _gameStartManager;
+    
+    private void Awake()
+    {
+        _gameStartManager = GameStartManager.Instance;
+    }
+    
     private void Start()
     {
         _isStartMovementCompleted = false;
@@ -16,6 +23,7 @@ public class CameraFollow : MonoBehaviour
     private void Update()
     {
         if (!_isStartMovementCompleted) return;
+        if (!_gameStartManager.isCanStartGame) return;
         transform.Translate(Vector3.down * 10 * Time.deltaTime);
     }
 }
