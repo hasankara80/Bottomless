@@ -5,74 +5,79 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private bool _isStartMovementCompleted;
+    public static PlayerMovement Instance { get; private set; }
+    public bool isStartMovementCompleted;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI starText;
-    private int _healthValue;
-    private int _starValue;
-    private int _arrowCount;
+    [HideInInspector] public int healthValue;
+    [HideInInspector] public int starValue;
+    [HideInInspector] public int arrowCount;
     private HealthBarManager _healthBarManager;
     private GameStartManager _gameStartManager;
     private TutorialManager _tutorialManager;
 
+    private void OnEnable()
+    {
+        EventManager.Instance.OnIntroMoved += OnIntroMovedHandler;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Instance.OnIntroMoved -= OnIntroMovedHandler;
+    }
+
     private void Awake()
     {
-        _gameStartManager = GameStartManager.Instance;
+        Instance = this;
     }
 
     private void Start()
     {
-        _healthValue = 5;
-        _starValue = 0;
-        _isStartMovementCompleted = false;
-        _arrowCount = 0;
+        healthValue = 5;
+        starValue = 0;
+        isStartMovementCompleted = false;
+        arrowCount = 0;
         _healthBarManager = HealthBarManager.Instance;
         _tutorialManager = TutorialManager.Instance;
-        transform.DOMoveX(3.5f, 1).SetEase(Ease.InCubic).OnComplete(() =>
-        {
-            transform.DOMove(new Vector3(0, 0, -2), 1).OnComplete(() =>
-            {
-                _isStartMovementCompleted = true;
-            });
-        });
+        _gameStartManager = GameStartManager.Instance;
+        OnIntroMovedHandler();
     }
 
     private void Update()
     {
-        if(!_isStartMovementCompleted) return;
+        if(!isStartMovementCompleted) return;
         if(!_gameStartManager.isCanStartGame) return;
         transform.Translate(Vector3.up * 10 * Time.deltaTime);
-
-        if (_arrowCount == 0)
+        if (arrowCount == 0)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 transform.DOMoveX(-2, 0.5f);
-                _arrowCount++;
+                arrowCount++;
             }
 
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 transform.DOMoveX(2, 0.5f);
-                    _arrowCount--;
+                    arrowCount--;
             }
         }
 
-        else if (_arrowCount == 1)
+        else if (arrowCount == 1)
         {
             if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 transform.DOMoveX(0, 0.5f);
-                _arrowCount--;
+                arrowCount--;
             }
         }
         
-        else if (_arrowCount == -1)
+        else if (arrowCount == -1)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
             {
                 transform.DOMoveX(0, 0.5f);
-                _arrowCount++;
+                arrowCount++;
             }
         }
     }
@@ -81,22 +86,22 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.collider.CompareTag("Obstacle"))
         {
-            _healthValue--;
-            _healthBarManager.ShowHeart(healthText,_healthValue);
-            _healthBarManager.ChangeSlider(_healthValue);
+            healthValue--;
+            _healthBarManager.ShowHeart(healthText,healthValue);
+            _healthBarManager.ChangeSlider(healthValue);
         }
 
         if (collision.collider.CompareTag("Heart"))
         {
-            _healthValue++;
-            _healthBarManager.ShowHeart(healthText,_healthValue);
-            _healthBarManager.ChangeSlider(_healthValue);
+            healthValue++;
+            _healthBarManager.ShowHeart(healthText,healthValue);
+            _healthBarManager.ChangeSlider(healthValue);
         }
 
         if (collision.collider.CompareTag("Star"))
         {
-            _starValue++;
-            starText.text = _starValue.ToString();
+            starValue++;
+            starText.text = starValue.ToString();
             ScaleStar();
         }
 
@@ -112,6 +117,17 @@ public class PlayerMovement : MonoBehaviour
         starText.transform.DOScale(2f, 0.5f).OnComplete(() =>
         {
             starText.transform.DOScale(1, 0.5f);
+        });
+    }
+
+    private void OnIntroMovedHandler()
+    {
+        transform.DOMoveX(3.5f, 1).SetEase(Ease.InCubic).OnComplete(() =>
+        {
+            transform.DOMove(new Vector3(0, 0, -2), 1).OnComplete(() =>
+            {
+                isStartMovementCompleted = true;
+            });
         });
     }
 }

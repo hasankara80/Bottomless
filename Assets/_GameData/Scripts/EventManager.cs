@@ -1,3 +1,5 @@
+using System;
+using UnityEditor;
 using UnityEngine;
 
 public class EventManager : MonoBehaviour
@@ -8,4 +10,7 @@ public class EventManager : MonoBehaviour
     {
         Instance = this;
     }
+    
+    public event Action OnIntroMoved;
+    public void MoveIntro() => OnIntroMoved?.Invoke();
 }
