@@ -1,8 +1,10 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 
 public class SettingsButtonManager : MonoBehaviour
 {
+    public static SettingsButtonManager Instance { get; private set; }
     [SerializeField] private Transform settingsCanvas;
     [SerializeField] private Transform audioCanvas;
     [SerializeField] private Transform player;
@@ -10,6 +12,12 @@ public class SettingsButtonManager : MonoBehaviour
     private PlayerMovement _playerMovement;
     private int _clickCount;
     private Camera _cam;
+    public Transform loseCanvas;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -36,7 +44,7 @@ public class SettingsButtonManager : MonoBehaviour
         }
     }
 
-    public void PressRestartButton()
+    public void PressRestartButtonOnSettings()
     {
         _gameStartManager.isCanStartGame = false;
         EventManager.Instance.MoveIntro();
@@ -44,6 +52,12 @@ public class SettingsButtonManager : MonoBehaviour
         _playerMovement.starValue = 0;
         _playerMovement.arrowCount = 0;
         _cam.transform.position = new Vector3(player.position.x, _cam.transform.position.y, player.position.z);
+        settingsCanvas.transform.DOScale(0, 0.1f);
+    }
+
+    public void PressRestartButtonOnLose()
+    {
+        loseCanvas.transform.DOScale(0, 0.1f);
     }
 
     public void PressCloseButton()

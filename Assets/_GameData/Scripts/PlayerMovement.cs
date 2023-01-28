@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -15,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private HealthBarManager _healthBarManager;
     private GameStartManager _gameStartManager;
     private TutorialManager _tutorialManager;
+    private SettingsButtonManager _settingsButtonManager;
 
     private void OnEnable()
     {
@@ -40,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
         _healthBarManager = HealthBarManager.Instance;
         _tutorialManager = TutorialManager.Instance;
         _gameStartManager = GameStartManager.Instance;
+        _settingsButtonManager = SettingsButtonManager.Instance;
         OnIntroMovedHandler();
     }
 
@@ -89,13 +90,24 @@ public class PlayerMovement : MonoBehaviour
             healthValue--;
             _healthBarManager.ShowHeart(healthText,healthValue);
             _healthBarManager.ChangeSlider(healthValue);
+
+            if (healthValue == 0)
+            {
+                _settingsButtonManager.loseCanvas.DOScale(1, 0.2f);
+                _gameStartManager.isCanStartGame = false;
+            }
         }
 
         if (collision.collider.CompareTag("Heart"))
         {
             healthValue++;
+            if (healthValue > 4)
+            {
+                healthValue = 5;
+            }
             _healthBarManager.ShowHeart(healthText,healthValue);
             _healthBarManager.ChangeSlider(healthValue);
+            collision.collider.gameObject.transform.DOScale(0, 0.2f);
         }
 
         if (collision.collider.CompareTag("Star"))
@@ -103,6 +115,7 @@ public class PlayerMovement : MonoBehaviour
             starValue++;
             starText.text = starValue.ToString();
             ScaleStar();
+            collision.collider.gameObject.transform.DOScale(0, 0.2f);
         }
 
         if (collision.collider.CompareTag("Tutorial"))

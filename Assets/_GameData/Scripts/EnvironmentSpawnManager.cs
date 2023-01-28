@@ -18,22 +18,22 @@ public class EnvironmentSpawnManager : MonoBehaviour
         
         for (int i = 0; i < 40; i++)
         {
-            Instantiate(starPrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0, (i + 1) * 50),quaternion.identity);
+            Instantiate(starPrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0.3f, (i + 1) * 50),quaternion.identity);
         }
 
         for (int i = 0; i < 5; i++)
         {
-            Instantiate(heartPrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0, (i + 1) * 410),quaternion.identity);
+            Instantiate(heartPrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0.3f, (i + 1) * 410),quaternion.identity);
         }
 
         for (int i = 0; i < 100; i++)
         {
-            Instantiate(stonePrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0, (i + 1) * 20),quaternion.identity);
+            Instantiate(stonePrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0.8f, (i + 1) * 20),quaternion.identity);
         }
 
         for (int i = 0; i < 100; i++)
         {
-            Instantiate(insectPrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0, (i + 1) * 30),quaternion.identity);
+            Instantiate(insectPrefab, new Vector3(_xPosition[Random.Range(0,_xPosition.Length)], 0.1f, (i + 1) * 30),quaternion.identity);
         }
     }
 }
