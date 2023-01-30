@@ -3,14 +3,12 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    private GameStartManager _gameStartManager;
     private PlayerMovement _playerMovement;
     [SerializeField] private Transform player;
 
     private void Start()
     {
         _playerMovement = PlayerMovement.Instance;
-        _gameStartManager = GameStartManager.Instance;
     }
 
     private void Update()

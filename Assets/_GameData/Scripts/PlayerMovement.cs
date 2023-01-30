@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public static PlayerMovement Instance { get; private set; }
-    public bool isStartMovementCompleted;
+    [HideInInspector] public bool isStartMovementCompleted;
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI starText;
     [HideInInspector] public int healthValue;
@@ -15,16 +16,17 @@ public class PlayerMovement : MonoBehaviour
     private GameStartManager _gameStartManager;
     private TutorialManager _tutorialManager;
     private SettingsButtonManager _settingsButtonManager;
+    [SerializeField] private Transform redEffect;
 
-    private void OnEnable()
-    {
-        EventManager.Instance.OnIntroMoved += OnIntroMovedHandler;
-    }
-
-    private void OnDisable()
-    {
-        EventManager.Instance.OnIntroMoved -= OnIntroMovedHandler;
-    }
+    // private void OnEnable()
+    // {
+    //     EventManager.Instance.OnIntroMoved += OnIntroMovedHandler;
+    // }
+    //
+    // private void OnDisable()
+    // {
+    //     EventManager.Instance.OnIntroMoved -= OnIntroMovedHandler;
+    // }
 
     private void Awake()
     {
@@ -48,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(!isStartMovementCompleted) return;
         if(!_gameStartManager.isCanStartGame) return;
-        transform.Translate(Vector3.up * 10 * Time.deltaTime);
+        transform.Translate(Vector3.down * 10 * Time.deltaTime);
         if (arrowCount == 0)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -90,7 +92,8 @@ public class PlayerMovement : MonoBehaviour
             healthValue--;
             _healthBarManager.ShowHeart(healthText,healthValue);
             _healthBarManager.ChangeSlider(healthValue);
-
+            StartCoroutine(ShowRedEffect());
+            collision.collider.enabled = false;
             if (healthValue == 0)
             {
                 _settingsButtonManager.loseCanvas.DOScale(1, 0.2f);
@@ -116,12 +119,17 @@ public class PlayerMovement : MonoBehaviour
             starText.text = starValue.ToString();
             ScaleStar();
             collision.collider.gameObject.transform.DOScale(0, 0.2f);
+            if (starValue == 20)
+            {
+                _settingsButtonManager.winCanvas.DOScale(1, 0.2f);
+            }
         }
 
         if (collision.collider.CompareTag("Tutorial"))
         {
             _gameStartManager.isCanStartGame = false;
             _tutorialManager.tutorialText.DOScale(1, 0.25f);
+            collision.collider.enabled = false;
         }
     }
 
@@ -137,10 +145,17 @@ public class PlayerMovement : MonoBehaviour
     {
         transform.DOMoveX(3.5f, 1).SetEase(Ease.InCubic).OnComplete(() =>
         {
-            transform.DOMove(new Vector3(0, 0, -2), 1).OnComplete(() =>
+            transform.DOMove(new Vector3(0, 1.3f, -2), 1).OnComplete(() =>
             {
                 isStartMovementCompleted = true;
             });
         });
+    }
+    
+    IEnumerator ShowRedEffect()
+    {
+        redEffect.localScale = Vector3.one;
+        yield return new WaitForSeconds(.5f);
+        redEffect.localScale = Vector3.zero;
     }
 }

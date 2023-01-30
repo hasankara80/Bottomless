@@ -13,4 +13,7 @@ public class EventManager : MonoBehaviour
     
     public event Action OnIntroMoved;
     public void MoveIntro() => OnIntroMoved?.Invoke();
+
+    public event Action OnGameStarted;
+    public void StartGame() => OnGameStarted?.Invoke();
 }

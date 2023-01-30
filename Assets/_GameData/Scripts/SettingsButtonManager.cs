@@ -13,6 +13,7 @@ public class SettingsButtonManager : MonoBehaviour
     private int _clickCount;
     private Camera _cam;
     public Transform loseCanvas;
+    public Transform winCanvas;
 
     private void Awake()
     {
