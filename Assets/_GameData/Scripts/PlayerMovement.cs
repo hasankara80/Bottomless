@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AnimatorController walkingAnimatorController;
     [SerializeField] private AnimatorController fallAnimatorController;
     [SerializeField] private AnimatorController jumpAnimatorController;
+    [SerializeField] private TextMeshProUGUI awardText;
 
     // private void OnEnable()
     // {
@@ -126,9 +127,11 @@ public class PlayerMovement : MonoBehaviour
             starText.text = starValue.ToString();
             ScaleStar();
             collision.collider.gameObject.transform.DOScale(0, 0.2f);
-            if (starValue == 20)
+            if (starValue == 5)
             {
+                awardText.text = starValue.ToString();
                 _settingsButtonManager.winCanvas.DOScale(1, 0.2f);
+                _gameStartManager.isCanStartGame = false;
             }
         }
 
