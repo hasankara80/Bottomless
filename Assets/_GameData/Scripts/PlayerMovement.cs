@@ -1,6 +1,7 @@
 using System.Collections;
 using DG.Tweening;
 using TMPro;
+using UnityEditor.Animations;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -17,6 +18,11 @@ public class PlayerMovement : MonoBehaviour
     private TutorialManager _tutorialManager;
     private SettingsButtonManager _settingsButtonManager;
     [SerializeField] private Transform redEffect;
+    [SerializeField] private Transform tapToPlay;
+    [SerializeField] private Animator animator;
+    [SerializeField] private AnimatorController walkingAnimatorController;
+    [SerializeField] private AnimatorController fallAnimatorController;
+    [SerializeField] private AnimatorController jumpAnimatorController;
 
     // private void OnEnable()
     // {
@@ -44,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
         _gameStartManager = GameStartManager.Instance;
         _settingsButtonManager = SettingsButtonManager.Instance;
         OnIntroMovedHandler();
+        animator.runtimeAnimatorController = walkingAnimatorController;
     }
 
     private void Update()
@@ -145,8 +152,14 @@ public class PlayerMovement : MonoBehaviour
     {
         transform.DOMoveX(3.5f, 1).SetEase(Ease.InCubic).OnComplete(() =>
         {
+            animator.runtimeAnimatorController = jumpAnimatorController;
             transform.DOMove(new Vector3(0, 1.3f, -2), 1).OnComplete(() =>
             {
+                transform.DOLocalRotate(new Vector3(-90, 0, 0), 1).OnComplete(() =>
+                {
+                    tapToPlay.localScale = Vector3.one;
+                });
+                animator.runtimeAnimatorController = fallAnimatorController;
                 isStartMovementCompleted = true;
             });
         });
